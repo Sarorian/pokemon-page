@@ -90,6 +90,7 @@ const ItemsTable = () => {
             <th>Sold Date</th>
             <th>Notes</th>
             <th>Action</th>
+            <th>Owner</th> {/* <-- Added new column */}
           </tr>
         </thead>
         <tbody>
@@ -168,6 +169,7 @@ const ItemsTable = () => {
                   "Sold"
                 )}
               </td>
+              <td>{item.owner || "-"}</td> {/* <-- Display owner here */}
             </tr>
           ))}
         </tbody>

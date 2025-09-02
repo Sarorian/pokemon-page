@@ -35,6 +35,21 @@ router.get("/:id", async (req, res) => {
 // --- CREATE new item ---
 router.post("/", async (req, res) => {
   try {
+    // Helper function to normalize year
+    const normalizeYear = (input) => {
+      if (!input) return undefined;
+      const date = new Date(input);
+      if (date.getFullYear() < 100) {
+        date.setFullYear(date.getFullYear() + 2000);
+      }
+      return date;
+    };
+
+    // Normalize dates
+    if (req.body.purchaseDate)
+      req.body.purchaseDate = normalizeYear(req.body.purchaseDate);
+    if (req.body.soldDate) req.body.soldDate = normalizeYear(req.body.soldDate);
+
     let item;
     switch (req.body.itemType) {
       case "Card":

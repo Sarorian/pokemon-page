@@ -5,6 +5,7 @@ import itemRoutes from "./routes/itemRoutes.js"; // updated import
 import "dotenv/config";
 import expenseRoutes from "./routes/expenseRoutes.js";
 import otherRoutes from "./routes/otherRoutes.js";
+import exportRoutes from "./routes/export.js";
 
 const app = express();
 
@@ -25,6 +26,7 @@ mongoose
 app.use("/api/items", itemRoutes); // updated route path
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/other", otherRoutes);
+app.use("/api/export", exportRoutes);
 
 // Start server
 app.listen(5000, () =>

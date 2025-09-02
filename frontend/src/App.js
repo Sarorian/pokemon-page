@@ -5,6 +5,7 @@ import AddItem from "./components/AddItem";
 import Home from "./components/Home";
 import Expenses from "./components/Expenses";
 import Other from "./components/Other";
+import ExportTransactions from "./components/ExportTransactions";
 
 function App() {
   return (
@@ -31,6 +32,9 @@ function App() {
           <Link to="/other" style={{ marginLeft: "20px" }}>
             Other
           </Link>
+          <Link to="/exporttransactions" style={{ marginLeft: "20px" }}>
+            Export
+          </Link>
         </nav>
 
         {/* Routes */}
@@ -40,6 +44,7 @@ function App() {
           <Route path="/add" element={<AddItem />} />
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/other" element={<Other />} />
+          <Route path="/exporttransactions" element={<ExportTransactions />} />
         </Routes>
       </div>
     </Router>

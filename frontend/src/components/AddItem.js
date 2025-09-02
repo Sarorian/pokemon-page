@@ -14,6 +14,7 @@ const AddItem = () => {
     soldPrice: "",
     soldDate: "",
     notes: "",
+    owner: "Joint", // default owner
   });
   const [message, setMessage] = useState("");
 
@@ -65,6 +66,7 @@ const AddItem = () => {
           soldPrice: "",
           soldDate: "",
           notes: "",
+          owner: "Joint",
         });
       } else {
         setMessage("Error: " + data.error);
@@ -91,6 +93,23 @@ const AddItem = () => {
               <option value="Card">Card</option>
               <option value="Slab">Slab</option>
               <option value="Sealed">Sealed</option>
+            </select>
+          </label>
+        </div>
+
+        {/* Owner */}
+        <div style={{ marginBottom: "10px" }}>
+          <label>
+            Owner:
+            <select
+              name="owner"
+              value={formData.owner}
+              onChange={handleChange}
+              style={{ marginLeft: "10px" }}
+            >
+              <option value="Owen">Owen</option>
+              <option value="Ben">Ben</option>
+              <option value="Joint">Joint</option>
             </select>
           </label>
         </div>

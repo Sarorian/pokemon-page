@@ -11,6 +11,12 @@ const ItemSchema = new mongoose.Schema(
     soldPrice: { type: Number, default: null },
     soldDate: { type: Date, default: null },
     notes: { type: String, default: "" },
+    owner: {
+      type: String,
+      enum: ["Owen", "Ben", "Joint"], // restrict to these values
+      required: true,
+      default: "Joint", // or pick what makes sense
+    },
   },
   options
 );
