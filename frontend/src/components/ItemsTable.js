@@ -4,6 +4,7 @@ const ItemsTable = () => {
   const [items, setItems] = useState([]);
   const [showSold, setShowSold] = useState(false);
   const [typeFilter, setTypeFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const [editingItemId, setEditingItemId] = useState(null);
   const [soldData, setSoldData] = useState({
     soldPrice: "",
@@ -40,22 +41,36 @@ const ItemsTable = () => {
 
   if (loading) return <p>Loading...</p>;
 
+  // Filtered & searched items
   const filteredItems = items.filter((item) => {
     const soldCondition = showSold || item.soldPrice == null;
     const typeCondition = typeFilter === "All" || item.itemType === typeFilter;
-    return soldCondition && typeCondition;
+    const searchCondition =
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.set &&
+        item.set.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (item.number &&
+        item.number.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (item.owner &&
+        item.owner.toLowerCase().includes(searchQuery.toLowerCase()));
+    return soldCondition && typeCondition && searchCondition;
   });
 
   return (
     <div style={{ padding: "20px" }}>
       <h2>Inventory</h2>
 
-      {/* Filters */}
-      <div style={{ marginBottom: "10px" }}>
-        <button
-          onClick={() => setShowSold((prev) => !prev)}
-          style={{ marginRight: "10px" }}
-        >
+      {/* Filters & Search */}
+      <div
+        style={{
+          marginBottom: "15px",
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "10px",
+          alignItems: "center",
+        }}
+      >
+        <button onClick={() => setShowSold((prev) => !prev)}>
           {showSold ? "Hide Sold Items" : "Show Sold Items"}
         </button>
 
@@ -71,85 +86,121 @@ const ItemsTable = () => {
             <option value="Sealed">Sealed</option>
           </select>
         </label>
+
+        <input
+          type="text"
+          placeholder="Search by Name, Set, Number, Owner..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ flex: "1 1 200px", padding: "5px" }}
+        />
       </div>
 
-      {/* Table */}
-      <table border="1" cellPadding="5" cellSpacing="0">
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Name</th>
-            <th>Set</th>
-            <th>Number</th>
-            <th>Condition</th>
-            <th>Company</th>
-            <th>Grade</th>
-            <th>Purchase Price</th>
-            <th>Purchase Date</th>
-            <th>Sold Price</th>
-            <th>Sold Date</th>
-            <th>Notes</th>
-            <th>Action</th>
-            <th>Owner</th> {/* <-- Added new column */}
-          </tr>
-        </thead>
-        <tbody>
-          {filteredItems.map((item) => (
-            <tr key={item._id}>
-              <td>{item.itemType}</td>
-              <td>{item.name}</td>
-              <td>{item.set || "-"}</td>
-              <td>{item.number || "-"}</td>
-              <td>{item.condition || "-"}</td>
-              <td>{item.company || "-"}</td>
-              <td>{item.grade || "-"}</td>
-              <td>${item.purchasePrice}</td>
-              <td>
+      {/* Items as responsive cards */}
+      <div
+        style={{
+          display: "grid",
+          gap: "15px",
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+        }}
+      >
+        {filteredItems.map((item) => (
+          <div
+            key={item._id}
+            style={{
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              padding: "15px",
+              backgroundColor: "#f9f9f9",
+            }}
+          >
+            <h3 style={{ margin: "0 0 10px 0" }}>
+              {item.name} ({item.itemType})
+            </h3>
+
+            <div style={{ marginBottom: "8px" }}>
+              <strong>Details:</strong>
+              {item.itemType === "Card" && (
+                <div>
+                  Set: {item.set || "-"} | Number: {item.number || "-"} | Cond:{" "}
+                  {item.condition || "-"}
+                </div>
+              )}
+              {item.itemType === "Slab" && (
+                <div>
+                  Company: {item.company || "-"} | Set: {item.set || "-"} |
+                  Grade: {item.grade || "-"}
+                </div>
+              )}
+              {item.itemType === "Sealed" && <div>-</div>}
+            </div>
+
+            <div style={{ marginBottom: "8px" }}>
+              <strong>Purchase:</strong>
+              <div>Price: ${item.purchasePrice}</div>
+              <div>
+                Date:{" "}
                 {item.purchaseDate
                   ? new Date(item.purchaseDate).toLocaleDateString()
                   : "-"}
-              </td>
-              <td>
-                {editingItemId === item._id ? (
+              </div>
+            </div>
+
+            <div style={{ marginBottom: "8px" }}>
+              <strong>Sold:</strong>
+              {editingItemId === item._id ? (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "5px",
+                  }}
+                >
                   <input
                     type="number"
                     name="soldPrice"
                     value={soldData.soldPrice}
                     onChange={handleEditChange}
+                    placeholder="Price"
                   />
-                ) : item.soldPrice != null ? (
-                  `$${item.soldPrice}`
-                ) : (
-                  "-"
-                )}
-              </td>
-              <td>
-                {editingItemId === item._id ? (
                   <input
                     type="date"
                     name="soldDate"
                     value={soldData.soldDate}
                     onChange={handleEditChange}
                   />
-                ) : item.soldDate ? (
-                  new Date(item.soldDate).toLocaleDateString()
-                ) : (
-                  "-"
-                )}
-              </td>
-              <td>
-                {editingItemId === item._id ? (
-                  <input
-                    type="text"
-                    name="notes"
-                    value={soldData.notes}
-                    onChange={handleEditChange}
-                  />
-                ) : (
-                  item.notes || "-"
-                )}
-              </td>
-              <td>
+                </div>
+              ) : item.soldPrice != null ? (
+                <div>
+                  <div>Price: ${item.soldPrice}</div>
+                  <div>
+                    Date: {new Date(item.soldDate).toLocaleDateString()}
+                  </div>
+                </div>
+              ) : (
+                <div>-</div>
+              )}
+            </div>
+
+            <div style={{ marginBottom: "8px" }}>
+              <strong>Notes:</strong>{" "}
+              {editingItemId === item._id ? (
+                <input
+                  type="text"
+                  name="notes"
+                  value={soldData.notes}
+                  onChange={handleEditChange}
+                />
+              ) : (
+                item.notes || "-"
+              )}
+            </div>
+
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              <div>
+                <strong>Owner:</strong> {item.owner || "-"}
+              </div>
+              <div>
                 {item.soldPrice == null ? (
                   editingItemId === item._id ? (
                     <>
@@ -168,12 +219,11 @@ const ItemsTable = () => {
                 ) : (
                   "Sold"
                 )}
-              </td>
-              <td>{item.owner || "-"}</td> {/* <-- Display owner here */}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

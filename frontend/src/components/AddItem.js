@@ -14,21 +14,16 @@ const AddItem = () => {
     soldPrice: "",
     soldDate: "",
     notes: "",
-    owner: "Joint", // default owner
+    owner: "Joint",
   });
   const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Build payload based on type
     let payload = { itemType, ...formData };
 
     // Remove irrelevant fields
@@ -77,35 +72,37 @@ const AddItem = () => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Add New Item</h2>
+    <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
+      <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
+        Add New Item
+      </h2>
 
-      <form onSubmit={handleSubmit}>
-        {/* Select item type */}
-        <div style={{ marginBottom: "10px" }}>
-          <label>
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: "flex", flexDirection: "column", gap: "12px" }}
+      >
+        {/* Item Type & Owner */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+          <label style={{ flex: "1 1 200px" }}>
             Item Type:
             <select
               value={itemType}
               onChange={(e) => setItemType(e.target.value)}
-              style={{ marginLeft: "10px" }}
+              style={{ marginLeft: "5px", width: "100%" }}
             >
               <option value="Card">Card</option>
               <option value="Slab">Slab</option>
               <option value="Sealed">Sealed</option>
             </select>
           </label>
-        </div>
 
-        {/* Owner */}
-        <div style={{ marginBottom: "10px" }}>
-          <label>
+          <label style={{ flex: "1 1 200px" }}>
             Owner:
             <select
               name="owner"
               value={formData.owner}
               onChange={handleChange}
-              style={{ marginLeft: "10px" }}
+              style={{ marginLeft: "5px", width: "100%" }}
             >
               <option value="Owen">Owen</option>
               <option value="Ben">Ben</option>
@@ -115,155 +112,180 @@ const AddItem = () => {
         </div>
 
         {/* Name */}
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Name:{" "}
-            <input
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </label>
-        </div>
+        <input
+          name="name"
+          placeholder="Item Name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+          style={{
+            padding: "8px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+          }}
+        />
 
-        {/* Fields for Card and Slab */}
+        {/* Card / Slab Fields */}
         {(itemType === "Card" || itemType === "Slab") && (
-          <>
-            <div style={{ marginBottom: "10px" }}>
-              <label>
-                Set:{" "}
-                <input
-                  name="set"
-                  value={formData.set}
-                  onChange={handleChange}
-                />
-              </label>
-            </div>
-            <div style={{ marginBottom: "10px" }}>
-              <label>
-                Number:{" "}
-                <input
-                  name="number"
-                  value={formData.number}
-                  onChange={handleChange}
-                />
-              </label>
-            </div>
-          </>
-        )}
-
-        {/* Condition for Card */}
-        {itemType === "Card" && (
-          <div style={{ marginBottom: "10px" }}>
-            <label>
-              Condition:
-              <select
-                name="condition"
-                value={formData.condition}
-                onChange={handleChange}
-              >
-                <option value="NM">NM</option>
-                <option value="LP">LP</option>
-                <option value="MP">MP</option>
-                <option value="HP">HP</option>
-                <option value="D">D</option>
-              </select>
-            </label>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+            <input
+              name="set"
+              placeholder="Set"
+              value={formData.set}
+              onChange={handleChange}
+              style={{
+                flex: "1 1 100px",
+                padding: "8px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
+            />
+            <input
+              name="number"
+              placeholder="Number"
+              value={formData.number}
+              onChange={handleChange}
+              style={{
+                flex: "1 1 100px",
+                padding: "8px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
+            />
           </div>
         )}
 
-        {/* Slab specific fields */}
-        {itemType === "Slab" && (
-          <>
-            <div style={{ marginBottom: "10px" }}>
-              <label>
-                Company:{" "}
-                <input
-                  name="company"
-                  value={formData.company}
-                  onChange={handleChange}
-                />
-              </label>
-            </div>
-            <div style={{ marginBottom: "10px" }}>
-              <label>
-                Grade:{" "}
-                <input
-                  name="grade"
-                  value={formData.grade}
-                  onChange={handleChange}
-                />
-              </label>
-            </div>
-          </>
+        {/* Condition */}
+        {itemType === "Card" && (
+          <select
+            name="condition"
+            value={formData.condition}
+            onChange={handleChange}
+            style={{
+              padding: "8px",
+              borderRadius: "5px",
+              border: "1px solid #ccc",
+            }}
+          >
+            <option value="NM">NM</option>
+            <option value="LP">LP</option>
+            <option value="MP">MP</option>
+            <option value="HP">HP</option>
+            <option value="D">D</option>
+          </select>
         )}
 
-        {/* Purchase info */}
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Purchase Price:{" "}
+        {/* Slab Fields */}
+        {itemType === "Slab" && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
             <input
-              type="number"
-              name="purchasePrice"
-              value={formData.purchasePrice}
+              name="company"
+              placeholder="Company"
+              value={formData.company}
               onChange={handleChange}
-              required
+              style={{
+                flex: "1 1 150px",
+                padding: "8px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
             />
-          </label>
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Purchase Date:{" "}
             <input
-              type="date"
-              name="purchaseDate"
-              value={formData.purchaseDate}
+              name="grade"
+              placeholder="Grade"
+              value={formData.grade}
               onChange={handleChange}
+              style={{
+                flex: "1 1 100px",
+                padding: "8px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
             />
-          </label>
-        </div>
+          </div>
+        )}
 
-        {/* Sold info */}
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Sold Price:{" "}
-            <input
-              type="number"
-              name="soldPrice"
-              value={formData.soldPrice}
-              onChange={handleChange}
-            />
-          </label>
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Sold Date:{" "}
-            <input
-              type="date"
-              name="soldDate"
-              value={formData.soldDate}
-              onChange={handleChange}
-            />
-          </label>
-        </div>
+        {/* Purchase Info */}
+        <input
+          type="number"
+          name="purchasePrice"
+          placeholder="Purchase Price"
+          value={formData.purchasePrice}
+          onChange={handleChange}
+          required
+          style={{
+            padding: "8px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+          }}
+        />
+        <input
+          type="date"
+          name="purchaseDate"
+          value={formData.purchaseDate}
+          onChange={handleChange}
+          style={{
+            padding: "8px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+          }}
+        />
+
+        {/* Sold Info */}
+        <input
+          type="number"
+          name="soldPrice"
+          placeholder="Sold Price"
+          value={formData.soldPrice}
+          onChange={handleChange}
+          style={{
+            padding: "8px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+          }}
+        />
+        <input
+          type="date"
+          name="soldDate"
+          value={formData.soldDate}
+          onChange={handleChange}
+          style={{
+            padding: "8px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+          }}
+        />
 
         {/* Notes */}
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Notes:{" "}
-            <input
-              name="notes"
-              value={formData.notes}
-              onChange={handleChange}
-            />
-          </label>
-        </div>
+        <input
+          name="notes"
+          placeholder="Notes"
+          value={formData.notes}
+          onChange={handleChange}
+          style={{
+            padding: "8px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+          }}
+        />
 
-        <button type="submit">Add Item</button>
+        <button
+          type="submit"
+          style={{
+            padding: "10px",
+            borderRadius: "5px",
+            backgroundColor: "#007bff",
+            color: "#fff",
+            border: "none",
+          }}
+        >
+          Add Item
+        </button>
       </form>
 
-      {message && <p style={{ marginTop: "20px" }}>{message}</p>}
+      {message && (
+        <p style={{ marginTop: "15px", textAlign: "center" }}>{message}</p>
+      )}
     </div>
   );
 };
